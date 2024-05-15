@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TwoSum {
+    /**
+     * 在给定整数数组中寻找两个数，使它们的和等于目标值
+     * @param nums 给定的整数数组
+     * @param target 目标值
+     * @return 包含两个数索引的数组，如果不存在符合条件的配对则返回空数组
+     */
     public int[] findTwoSum(int[] nums, int target) {
         Map<Integer, Integer> numToIndex = new HashMap<>();
 

@@ -12,6 +12,11 @@ import java.util.regex.Pattern;
  * 读取URL内容（串行化版本）
  */
 public class ReadURLContent {
+    /**
+     * 从给定的URL中读取文本内容并返回
+     * @param urlString 要读取的URL字符串
+     * @return URL内容的字符串表示形式
+     */
     public static String readURL(String urlString) {
         StringBuilder content = new StringBuilder();
 
@@ -34,6 +39,11 @@ public class ReadURLContent {
         return content.toString();
     }
 
+    /**
+     * 从一组URL中读取包含特定格式数据的字段，并返回这些字段的总和
+     * @param urls 要读取的URL数组
+     * @return URL内容中指定字段的总和
+     */
     public static int sumDataFromURLs(String[] urls) {
         int sum = 0;
         Pattern pattern = Pattern.compile("data\\s*:\\s*(\\d+)");
@@ -51,14 +61,14 @@ public class ReadURLContent {
 
 
     public static void main(String[] args) {
+        // 构建URL数组
         String[] urls = new String[10];
         for (int i = 1; i <= 10; i++) {
             urls[i - 1] = "http://dy-public.oss-cn-shenzhen.aliyuncs.com/interviewTestData/" + i + ".txt";
         }
 
+        // 计算URL内容中data字段的总和
         int totalSum = sumDataFromURLs(urls);
         System.out.println("10个文件中data字段的总和为：" + totalSum);
     }
-
-
 }
