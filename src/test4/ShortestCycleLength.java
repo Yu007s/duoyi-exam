@@ -1,60 +1,77 @@
 package test4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ShortestCycleLength {
-    static int n; // 点的数量
-    static int[][] points; // 存储点的坐标
-    static boolean[] visited; // 记录节点是否已经访问过
-    static int shortestLength = Integer.MAX_VALUE; // 最短环路的边长之和
+    // 定义一个表示坐标点的内部静态类
+    static class Point {
+        int x, y;
+        Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    // 计算两点之间的距离
+    public static double distance(Point p1, Point p2) {
+        int dx = p1.x - p2.x;
+        int dy = p1.y - p2.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // 计算环的边长之和
+    public static double calculatePerimeter(Point[] points) {
+        double perimeter = 0.0;
+        int n = points.length;
+        for (int i = 0; i < n; i++) {
+            perimeter += distance(points[i], points[(i + 1) % n]);
+        }
+        return perimeter;
+    }
 
     public static void main(String[] args) {
-        n = 4;  // 点的数量，可以根据需要修改
-        points = new int[n][2]; // 初始化点的坐标数组
-        visited = new boolean[n]; // 初始化节点访问标记数组
+        // 给定一组点的坐标
+        Point[] points = {
+                new Point(0, 0),
+                new Point(0, 1),
+                new Point(1, 0),
+                new Point(1, 1),
+        };
 
-        // 示例输入点坐标
-        points[0] = new int[]{0, 1};
-        points[1] = new int[]{1, 0};
-        points[2] = new int[]{1, 1};
-        points[3] = new int[]{0, 0};
+        int n = points.length;
+        double minPerimeter = Double.MAX_VALUE;
 
-        dfs(0, 0, new ArrayList<>());  // 从第一个点开始进行深度优先搜索
-        System.out.println("最短环路的边长之和为：" + shortestLength);
-    }
+        List<Point> permutedPoints = new ArrayList<>(Arrays.asList(points));
 
-    /**
-     * 深度优先搜索找出最短环路的边长之和
-     * @param current 当前节点
-     * @param length 当前路径长度
-     * @param path 当前路径
-     */
-    public static void dfs(int current, int length, ArrayList<Integer> path) {
-        visited[current] = true; // 标记当前节点已访问
-        path.add(current); // 将当前节点加入路径
-
-        if (path.size() == n) { // 如果路径长度等于点的数量，说明形成了一个环路
-            int cycleLength = length + distance(points[current], points[path.get(0)]); // 计算环路长度
-            shortestLength = Math.min(shortestLength, cycleLength); // 更新最短环路长度
-        } else {
-            for (int i = 0; i < n; i++) {
-                if (!visited[i]) { // 如果节点未访问过
-                    int newLength = length + distance(points[current], points[i]); // 计算新路径长度
-                    dfs(i, newLength, new ArrayList<>(path)); // 递归深度优先搜索
-                }
-            }
+        // 生成所有可能的排列组合
+        for (List<Point> perm : permute(permutedPoints)) {
+            double perimeter = calculatePerimeter(perm.toArray(new Point[0]));
+            minPerimeter = Math.min(minPerimeter, perimeter);
         }
 
-        visited[current] = false; // 恢复当前节点未访问状态，回溯
+        System.out.println("最短的环的边长之和为：" + minPerimeter);
     }
 
-    /**
-     * 计算两点之间的曼哈顿距离
-     * @param p1 点1坐标
-     * @param p2 点2坐标
-     * @return 曼哈顿距离
-     */
-    public static int distance(int[] p1, int[] p2) {
-        return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]);
+    // 生成所有排列组合方法实现，循环首次调用初始index为0
+    public static List<List<Point>> permute(List<Point> points) {
+        List<List<Point>> result = new ArrayList<>();
+        permuteHelper(result, points, 0);
+        return result;
+    }
+
+    // 递归生成排列组合的辅助函数
+    private static void permuteHelper(List<List<Point>> result, List<Point> points, int index) {
+        if (index >= points.size()) {
+            result.add(new ArrayList<>(points));
+        } else {
+            for (int i = index; i < points.size(); i++) {
+                Collections.swap(points, index, i);
+                permuteHelper(result, points, index + 1);
+                Collections.swap(points, index, i);
+            }
+        }
     }
 }
